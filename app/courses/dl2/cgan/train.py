@@ -19,7 +19,7 @@ for epoch in range(opt.epoch_count, opt.niter + opt.niter_decay + 1):
     iter_data_time = time.time()
     epoch_iter = 0
 
-    for i, data in enumerate(dataset):
+    for data in dataset:
         iter_start_time = time.time()
         if total_steps % opt.print_freq == 0:
             t_data = iter_start_time - iter_data_time
