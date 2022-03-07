@@ -64,18 +64,25 @@ class Visualizer():
                 if label_html_row != '':
                     label_html += '<tr>%s</tr>' % label_html_row
                 # pane col = image row
-                self.vis.images(images, nrow=ncols, win=self.display_id + 1,
-                                padding=2, opts=dict(title=title + ' images'))
+                self.vis.images(
+                    images,
+                    nrow=ncols,
+                    win=self.display_id + 1,
+                    padding=2,
+                    opts=dict(title=f'{title} images'),
+                )
+
                 label_html = '<table>%s</table>' % label_html
-                self.vis.text(table_css + label_html, win=self.display_id + 2,
-                              opts=dict(title=title + ' labels'))
+                self.vis.text(
+                    table_css + label_html,
+                    win=self.display_id + 2,
+                    opts=dict(title=f'{title} labels'),
+                )
+
             else:
-                idx = 1
-                for label, image_numpy in visuals.items():
+                for idx, (label, image_numpy) in enumerate(visuals.items(), start=1):
                     self.vis.image(image_numpy.transpose([2, 0, 1]), opts=dict(title=label),
                                    win=self.display_id + idx)
-                    idx += 1
-
         if self.use_html and (save_result or not self.saved):  # save images to a html file
             self.saved = True
             for label, image_numpy in visuals.items():
@@ -104,14 +111,18 @@ class Visualizer():
         self.plot_data['X'].append(epoch + counter_ratio)
         self.plot_data['Y'].append([errors[k] for k in self.plot_data['legend']])
         self.vis.line(
-            X=np.stack([np.array(self.plot_data['X'])] * len(self.plot_data['legend']), 1),
+            X=np.stack(
+                [np.array(self.plot_data['X'])] * len(self.plot_data['legend']), 1
+            ),
             Y=np.array(self.plot_data['Y']),
             opts={
-                'title': self.name + ' loss over time',
+                'title': f'{self.name} loss over time',
                 'legend': self.plot_data['legend'],
                 'xlabel': 'epoch',
-                'ylabel': 'loss'},
-            win=self.display_id)
+                'ylabel': 'loss',
+            },
+            win=self.display_id,
+        )
 
     # errors: same format as |errors| of plotCurrentErrors
     def print_current_errors(self, epoch, i, errors, t, t_data):

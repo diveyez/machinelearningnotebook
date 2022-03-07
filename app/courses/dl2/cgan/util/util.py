@@ -23,7 +23,7 @@ def diagnose_network(net, name='network'):
             mean += torch.mean(torch.abs(param.grad.data))
             count += 1
     if count > 0:
-        mean = mean / count
+        mean /= count
     print(name)
     print(mean)
 

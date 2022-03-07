@@ -20,15 +20,20 @@ def train_clas(prefix, cuda_id, lm_id='', clas_id=None, bs=64, cl=1, backwards=F
           f'chain_thaw {chain_thaw}; from_scratch {from_scratch}; train_file_id {train_file_id}')
     torch.cuda.set_device(cuda_id)
     PRE = 'bwd_' if backwards else 'fwd_'
-    if bpe: PRE = 'bpe_' + PRE
+    if bpe:
+        PRE = f'bpe_{PRE}'
     IDS = 'bpe' if bpe else 'ids'
     if train_file_id != '': train_file_id = f'_{train_file_id}'
     PATH=f'data/nlp_clas/{prefix}/'
     if lm_id != '': lm_id += '_'
     if clas_id != '': clas_id += '_'
     lm_path=f'{PRE}{lm_id}lm_enc'
-    assert os.path.exists(os.path.join(PATH, 'models', lm_path + '.h5')),\
-        'Error: %s does not exist.' % os.path.join(PATH, 'models', lm_path + '.h5')
+    assert os.path.exists(
+        os.path.join(PATH, 'models', f'{lm_path}.h5')
+    ), 'Error: %s does not exist.' % os.path.join(
+        PATH, 'models', lm_path + '.h5'
+    )
+
     bptt,em_sz,nh,nl = 70,400,1150,3
     opt_fn = partial(optim.Adam, betas=(0.8, 0.99))
 
@@ -72,8 +77,8 @@ def train_clas(prefix, cuda_id, lm_id='', clas_id=None, bs=64, cl=1, backwards=F
     learn.clip=25.
     learn.metrics = [accuracy]
 
-    lrm = 2.6
     if use_discriminative:
+        lrm = 2.6
         lrs = np.array([lr/(lrm**4), lr/(lrm**3), lr/(lrm**2), lr/lrm, lr])
     else:
         lrs = lr
